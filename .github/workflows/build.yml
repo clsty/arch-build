@@ -1,10 +1,10 @@
 name: BUILD
 
 on:
-  push:
   workflow_dispatch:
-  schedule:
-    - cron:  '1 */8 * * *'
+#  push:
+#  schedule:
+#    - cron:  '1 */8 * * *'
 
 jobs:
   buildAUR:
