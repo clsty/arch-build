@@ -38,8 +38,5 @@ function get_pkgbase(){
   echo "$pkgbase"
 }
 
-if [[ -d "$pkgname" ]];
-  then pkgdir=$pkgname
-  else pkgdir=$(get_pkgbase $pkgname)
-fi
+cd $pkgname || cd $(get_pkgbase $pkgname) || exit 1
 python3 ../build-aur-action/encode_name.py
