@@ -6,15 +6,17 @@ useradd builder -m
 echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 chmod -R a+rw .
 
-cat << EOM >> /etc/pacman.conf
-[archlinuxcn]
-Server = https://repo.archlinuxcn.org/x86_64
-EOM
-
 pacman-key --init
-pacman-key --lsign-key "farseerfc@archlinux.org"
-pacman -Sy --noconfirm archlinux{,cn}-keyring
-pacman -Syu --noconfirm yay
+pacman -Syu --noconfirm archlinux-keyring
+install-yay(){
+  pacman -S --needed --noconfirm base-devel
+  sudo --set-home -u builder git clone https://aur.archlinux.org/yay-bin.git buildyay
+  cd buildyay
+  sudo --set-home -u builder makepkg -si --noconfirm
+  cd ..
+  rm -rf buildyay
+}
+install-yay
 if [ ! -z "$INPUT_PREINSTALLPKGS" ]; then
     pacman -Su --noconfirm "$INPUT_PREINSTALLPKGS"
 fi
@@ -38,5 +40,10 @@ function get_pkgbase(){
   echo "$pkgbase"
 }
 
-cd $pkgname || cd $(get_pkgbase $pkgname) || exit 1
+if [[ -d "$pkgname" ]];
+  then pkgdir="$pkgname"
+  else pkgdir="$(get_pkgbase $pkgname)"
+fi
+
+cd $pkgdir || exit 1
 python3 ../build-aur-action/encode_name.py
