@@ -5,3 +5,4 @@ It's now standalone mainly because I do not want to unexpectedly click the butto
 
 TODO:
 - [ ] A better docker image so we do not need to install things from beginning for every build.
+- [ ] Configure gpg and package repository.
