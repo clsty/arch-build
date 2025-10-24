@@ -1,15 +1,16 @@
 #!/bin/bash
 
+set -euo pipefail
+
 pkgname=$1
 
 useradd builder -m
 echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 chmod -R a+rw .
 
-pacman-key --init
-pacman -Syu --noconfirm archlinux-keyring
+PACMAN_FLAGS="--needed --noconfirm"
+
 install-yay(){
-  pacman -S --needed --noconfirm base-devel
   sudo --set-home -u builder git clone https://aur.archlinux.org/yay-bin.git buildyay
   cd buildyay
   sudo --set-home -u builder makepkg -si --noconfirm
@@ -18,10 +19,10 @@ install-yay(){
 }
 install-yay
 if [ ! -z "$INPUT_PREINSTALLPKGS" ]; then
-    pacman -Su --noconfirm "$INPUT_PREINSTALLPKGS"
+    pacman -S ${PACMAN_FLAGS} "$INPUT_PREINSTALLPKGS"
 fi
 
-sudo --set-home -u builder yay -S --noconfirm --builddir=./ "$pkgname"
+sudo --set-home -u builder yay -S ${PACMAN_FLAGS} --builddir=./ "$pkgname"
 
 # Find the actual build directory (pkgbase) created by yay.
 # Some AUR packages use a different pkgbase directory name,
@@ -42,11 +43,10 @@ function get_pkgbase(){
 if [[ -d "$pkgname" ]];
   then pkgdir="$pkgname"
   else
-    pacman -S --needed --noconfirm jq
     pkgdir="$(get_pkgbase $pkgname)"
 fi
 
 echo "The pkgdir is $pkgdir"
 echo "The pkgname is $pkgname"
-cd $pkgdir || exit 1
+cd "$pkgdir"
 python3 ../build-aur-action/encode_name.py

@@ -2,7 +2,9 @@ name: BUILD
 
 on:
   workflow_dispatch:
-#  push:
+  push:
+    branches: [ main ]
+    paths: [ test/** ]
 #  schedule:
 #    - cron:  '1 */8 * * *'
 
