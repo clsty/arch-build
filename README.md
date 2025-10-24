@@ -1,3 +1,10 @@
+**NOTE:**
+This repo is originally a fork of [vifly/arch-build](https://github.com/vifly/arch-build).
+
+It's now standalone mainly because I do not want to unexpectedly click the button "discard all changes" by chance.
+
+---
+
 Use GitHub Actions to build Arch packages.
 For more information, please read [my post](https://viflythink.com/Use_GitHubActions_to_build_AUR/) (Chinese).
 
